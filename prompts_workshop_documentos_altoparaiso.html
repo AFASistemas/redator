@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Prompts — Workshop IA Documentos | Casa do Empreendedor</title>
+<style>
+  :root {
+    --primary: #1A5F7A;
+    --primary-dark: #0B2A3D;
+    --accent: #FF7E36;
+    --accent-soft: #FFE6D5;
+    --accent-hover: #E66923;
+    --light: #F8F9FA;
+    --card: #FFFFFF;
+    --text-dark: #1E293B;
+    --text-muted: #64748B;
+    --border: #E2E8F0;
+    --claude: #C15F3C;
+    --claude-soft: #FCE7E0;
+    --ok: #16A34A;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { font-size: 16px; -webkit-text-size-adjust: 100%; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    background: var(--light);
+    color: var(--text-dark);
+    line-height: 1.5;
+    padding: 16px;
+    max-width: 720px;
+    margin: 0 auto;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  header {
+    background: var(--primary-dark);
+    color: white;
+    padding: 24px 20px;
+    border-radius: 14px;
+    margin-bottom: 16px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  header::after {
+    content: "";
+    position: absolute;
+    right: -30px;
+    top: -30px;
+    width: 140px;
+    height: 140px;
+    border-radius: 50%;
+    background: var(--accent);
+    opacity: 0.18;
+  }
+
+  header .tag {
+    font-size: 11px;
+    letter-spacing: 4px;
+    color: var(--accent);
+    font-weight: 700;
+    margin-bottom: 10px;
+    position: relative;
+  }
+
+  header h1 {
+    font-size: 24px;
+    line-height: 1.2;
+    margin-bottom: 6px;
+    position: relative;
+  }
+
+  header p {
+    font-size: 14px;
+    color: #CBD5E1;
+    position: relative;
+  }
+
+  .intro {
+    background: var(--card);
+    border-radius: 12px;
+    padding: 18px 20px;
+    margin-bottom: 14px;
+    border: 1px solid var(--border);
+  }
+
+  .intro h2 {
+    font-size: 14px;
+    margin-bottom: 10px;
+    color: var(--primary);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  .intro ol {
+    padding-left: 22px;
+    font-size: 14px;
+    color: var(--text-dark);
+  }
+
+  .intro ol li {
+    margin-bottom: 6px;
+  }
+
+  .intro ol li strong {
+    color: var(--primary);
+  }
+
+  .tools-bar {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 22px;
+  }
+
+  .tool-link {
+    background: var(--card);
+    border: 2px solid var(--claude);
+    border-radius: 10px;
+    padding: 14px 32px;
+    text-align: center;
+    text-decoration: none;
+    color: var(--text-dark);
+    font-weight: 600;
+    transition: transform 0.12s;
+    -webkit-tap-highlight-color: transparent;
+    min-width: 240px;
+  }
+
+  .tool-link:active { transform: scale(0.96); }
+
+  .tool-name {
+    display: block;
+    font-size: 18px;
+    margin-bottom: 2px;
+    color: var(--claude);
+  }
+
+  .tool-url {
+    font-size: 12px;
+    color: var(--text-muted);
+    font-weight: 400;
+  }
+
+  .section-title {
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--text-muted);
+    font-weight: 700;
+    margin: 6px 4px 10px;
+  }
+
+  .prompt-card {
+    background: var(--card);
+    border-radius: 12px;
+    padding: 18px;
+    margin-bottom: 12px;
+    border: 1px solid var(--border);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+  }
+
+  .prompt-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 14px;
+  }
+
+  .prompt-number {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    background: var(--accent);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+
+  .prompt-meta {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .prompt-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text-dark);
+    line-height: 1.25;
+    margin-bottom: 4px;
+  }
+
+  .tool-badge {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 3px 8px;
+    border-radius: 4px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    background: var(--claude-soft);
+    color: var(--claude);
+  }
+
+  .prompt-preview {
+    background: var(--light);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 12px;
+    font-family: ui-monospace, "SF Mono", Consolas, Menlo, monospace;
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-bottom: 12px;
+    max-height: 110px;
+    overflow: hidden;
+    position: relative;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    line-height: 1.5;
+  }
+
+  .prompt-preview.expanded {
+    max-height: none;
+  }
+
+  .prompt-preview:not(.expanded)::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 50px;
+    background: linear-gradient(transparent, var(--light));
+    pointer-events: none;
+  }
+
+  .actions {
+    display: flex;
+    gap: 8px;
+  }
+
+  .btn {
+    padding: 14px 14px;
+    border-radius: 9px;
+    border: none;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.1s, background 0.15s;
+    -webkit-tap-highlight-color: transparent;
+    min-height: 48px;
+    font-family: inherit;
+  }
+
+  .btn-secondary {
+    background: var(--light);
+    color: var(--text-dark);
+    border: 1px solid var(--border);
+    flex: 1;
+  }
+
+  .btn-secondary:active {
+    background: var(--border);
+  }
+
+  .btn-primary {
+    background: var(--accent);
+    color: white;
+    flex: 2;
+    box-shadow: 0 2px 6px rgba(255,126,54,0.3);
+  }
+
+  .btn-primary:active {
+    transform: scale(0.97);
+    background: var(--accent-hover);
+  }
+
+  .btn-primary.copied {
+    background: var(--ok);
+    box-shadow: 0 2px 6px rgba(22,163,74,0.3);
+  }
+
+  .tip-card {
+    background: var(--accent-soft);
+    border-radius: 12px;
+    padding: 16px 18px;
+    margin: 20px 0;
+    border-left: 4px solid var(--accent);
+  }
+
+  .tip-card h3 {
+    color: var(--accent);
+    font-size: 12px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+    font-weight: 700;
+  }
+
+  .tip-card p {
+    font-size: 14px;
+    color: var(--text-dark);
+    line-height: 1.5;
+  }
+
+  .tip-card p strong {
+    color: var(--primary-dark);
+  }
+
+  footer {
+    text-align: center;
+    padding: 24px 0 12px;
+    font-size: 12px;
+    color: var(--text-muted);
+    line-height: 1.6;
+  }
+
+  @media (min-width: 640px) {
+    body { padding: 24px; }
+    header h1 { font-size: 28px; }
+    .prompt-title { font-size: 17px; }
+    .prompt-preview { font-size: 13px; max-height: 130px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="tag">WORKSHOP IA — DOCUMENTOS</div>
+  <h1>Construção de documentos com IA</h1>
+  <p>Casa do Empreendedor</p>
+</header>
+
+<div class="intro">
+  <h2>Como usar</h2>
+  <ol>
+    <li>Abra o <strong>Claude</strong> e mantenha uma <strong>única conversa</strong> aberta para os 3 prompts</li>
+    <li>Toque em <strong>Copiar</strong> no Prompt 1, cole no Claude, preencha os campos em [COLCHETES] e envie</li>
+    <li>Em seguida, copie o Prompt 2 e cole na mesma conversa</li>
+    <li>Por fim, copie o Prompt 3 para auditar o material antes de apresentar</li>
+  </ol>
+</div>
+
+<div class="tools-bar">
+  <a href="https://claude.ai" target="_blank" rel="noopener" class="tool-link">
+    <span class="tool-name">Claude</span>
+    <span class="tool-url">claude.ai</span>
+  </a>
+</div>
+
+<div class="section-title">Os 3 prompts em sequência</div>
+
+<!-- Prompt 1 -->
+<div class="prompt-card">
+  <div class="prompt-header">
+    <div class="prompt-number">1</div>
+    <div class="prompt-meta">
+      <div class="prompt-title">Construção do documento</div>
+      <span class="tool-badge">Claude</span>
+    </div>
+  </div>
+  <div class="prompt-preview" id="preview-1"></div>
+  <div class="actions">
+    <button class="btn btn-secondary" onclick="toggleExpand(1, this)">Ver tudo</button>
+    <button class="btn btn-primary" onclick="copyPrompt(1, this)">Copiar</button>
+  </div>
+</div>
+
+<!-- Prompt 2 -->
+<div class="prompt-card">
+  <div class="prompt-header">
+    <div class="prompt-number">2</div>
+    <div class="prompt-meta">
+      <div class="prompt-title">Conversão em apresentação</div>
+      <span class="tool-badge">Claude</span>
+    </div>
+  </div>
+  <div class="prompt-preview" id="preview-2"></div>
+  <div class="actions">
+    <button class="btn btn-secondary" onclick="toggleExpand(2, this)">Ver tudo</button>
+    <button class="btn btn-primary" onclick="copyPrompt(2, this)">Copiar</button>
+  </div>
+</div>
+
+<!-- Prompt 3 -->
+<div class="prompt-card">
+  <div class="prompt-header">
+    <div class="prompt-number">3</div>
+    <div class="prompt-meta">
+      <div class="prompt-title">Auditoria com persona sintética</div>
+      <span class="tool-badge">Claude</span>
+    </div>
+  </div>
+  <div class="prompt-preview" id="preview-3"></div>
+  <div class="actions">
+    <button class="btn btn-secondary" onclick="toggleExpand(3, this)">Ver tudo</button>
+    <button class="btn btn-primary" onclick="copyPrompt(3, this)">Copiar</button>
+  </div>
+</div>
+
+<div class="tip-card">
+  <h3>Lembrete importante</h3>
+  <p>Os <strong>3 prompts rodam na MESMA conversa</strong> do Claude, em sequência. Não abra uma conversa nova para cada prompt — o Prompt 2 e o Prompt 3 dependem do resultado do anterior. Se você fechar a aba do Claude, abra de novo o mesmo chat antes de continuar.</p>
+</div>
+
+<footer>
+  Material complementar do Workshop IA — Construção de Documentos<br>
+  Instrutor: Daniel Couto de Brito
+</footer>
+
+<script>
+const prompts = {
+  1: `Você é um redator profissional experiente, que ajuda empresários a produzir documentos claros, objetivos e bem estruturados. Linguagem profissional e acessível, sem jargão desnecessário, sem rodeios.
+
+DOCUMENTO PARA CONSTRUIR:
+- Tipo: [ESCREVA AQUI: proposta comercial / orçamento / plano de negócios / manual / procedimento interno / e-mail formal / política interna / contrato simples / outro]
+- Objetivo do documento: [ESCREVA AQUI: o que esse documento precisa fazer acontecer — fechar uma venda, comunicar uma mudança, captar investimento, orientar a equipe]
+- Quem vai ler: [ESCREVA AQUI: cliente, sócio, funcionário, banco, investidor, equipe interna]
+- Informações principais a incluir: [ESCREVA AQUI: dados, números, nomes, prazos, valores, etapas que devem aparecer no documento]
+- Tom: [ESCREVA AQUI: formal / semi-formal / direto / técnico]
+- Tamanho: [ESCREVA AQUI: 1 página / 2-3 páginas / 4-6 páginas]
+
+ENTREGUE O DOCUMENTO COMPLETO:
+- Estrutura adequada ao tipo (capa, seções, fechamento)
+- Linguagem objetiva, frases curtas
+- Pronto para revisão final e ajuste de detalhes
+
+REGRAS:
+- Português brasileiro, registro profissional
+- Não invente dados — se faltar informação importante, deixe marcado entre [colchetes] pra ser completado depois
+- Não use jargão vazio nem termos genéricos
+- Não faça perguntas. Entregue o documento estruturado direto.`,
+
+  2: `Você é o mesmo redator profissional que acabou de gerar o documento acima nesta conversa. Agora vai converter esse documento em uma apresentação de PowerPoint, dirigida ao mesmo público definido no Prompt 1 (campo "Quem vai ler").
+
+CONFIGURAÇÃO:
+- Tempo de apresentação: [ESCREVA AQUI: 10 min / 15 min / 20 min / 30 min]
+- Quantidade de slides: [ESCREVA AQUI: 8-10 / 12-15 / 16-20]
+
+ENTREGUE CADA SLIDE COMPLETO, NESTE FORMATO:
+
+SLIDE 1
+TÍTULO: [o que aparece em destaque no topo do slide]
+CONTEÚDO VISUAL: [3 a 5 bullets curtos OU 1 frase-âncora — texto leve, sem parágrafos]
+NOTAS DO APRESENTADOR: [2 a 3 frases que o apresentador fala oralmente para aprofundar o que está no slide]
+
+SLIDE 2
+(mesma estrutura)
+
+... e assim sucessivamente até completar a apresentação.
+
+PRINCÍPIOS:
+- Slide é apoio visual leve. A fala do apresentador é onde o conteúdo aprofunda
+- Slide carregado de texto não funciona — se for adensar, vira documento
+- Cada slide tem UMA ideia principal
+- Use o documento acima como fonte da verdade — não invente dados novos
+- Primeiro slide: capa com título + empresa
+- Último slide: encerramento com próximos passos ou abertura para perguntas
+
+REGRAS:
+- Português brasileiro profissional
+- Bullets em linguagem direta, frases curtas
+- Notas do apresentador em tom natural, como fala mesmo
+- Não faça perguntas. Entregue todos os slides estruturados direto.`,
+
+  3: `Agora vamos testar o material antes de apresentar.
+
+Você vai fazer uma simulação: vai imaginar que é o leitor/audiência desse documento e dessa apresentação — exatamente quem foi descrito no campo "Quem vai ler" do Prompt 1 lá em cima nesta conversa.
+
+Você vai ler o documento e ver a apresentação acima como se fosse essa pessoa de verdade.
+
+ENTREGUE 4 COISAS, NESTA ORDEM, COM ESSES TÍTULOS:
+
+1. MINHA PRIMEIRA REAÇÃO
+Em 2 a 3 frases, em primeira pessoa, como esse leitor reagiu. O que entendeu? O que ficou claro? O que ficou solto na cabeça? Linguagem real dessa pessoa, sem termo técnico de consultor.
+
+2. O QUE FUNCIONOU PRA MIM
+Liste 2 a 3 coisas concretas que comunicaram bem. Identifique de qual parte veio cada uma — "no documento, a seção X foi clara porque..." / "na apresentação, o slide Y ajudou porque...".
+
+3. O QUE TROPEÇOU OU FICOU CONFUSO
+Liste 1 a 2 coisas que não ficaram claras, geraram dúvida, soaram redundantes ou pareceram instrução vaga. Pode ser termo difícil, falta de exemplo, slide com texto demais, ordem confusa.
+
+4. UMA MUDANÇA PRÁTICA QUE EU SUGERIRIA
+Uma única sugestão de ajuste — em qual parte (documento ou slide específico) e o que mudar — que faria esse leitor entender melhor ou seguir o procedimento na prática.
+
+REGRAS:
+- Use primeira pessoa nas seções 1 a 3 (o leitor falando)
+- Na seção 4 volte a ser o consultor entregando recomendação prática
+- Linguagem real desse leitor (funcionário, cliente, banco, sócio — depende de quem foi definido lá no Prompt 1)
+- Não invente novas características do leitor — use exatamente o perfil definido
+- Não use jargão de marketing ou consultoria genérica
+- Não faça perguntas. Entregue as 4 partes direto.`
+};
+
+function toggleExpand(num, btn) {
+  const preview = document.getElementById('preview-' + num);
+  const expanded = preview.classList.toggle('expanded');
+  btn.textContent = expanded ? 'Ver menos' : 'Ver tudo';
+}
+
+function copyPrompt(num, btn) {
+  const text = prompts[num];
+
+  const onSuccess = () => {
+    btn.textContent = '✓ Copiado!';
+    btn.classList.add('copied');
+    setTimeout(() => {
+      btn.textContent = 'Copiar';
+      btn.classList.remove('copied');
+    }, 2000);
+  };
+
+  const onFail = () => {
+    alert('Não consegui copiar automaticamente. Toque em "Ver tudo" e selecione o texto manualmente.');
+  };
+
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text).then(onSuccess).catch(() => {
+      tryFallback(text, onSuccess, onFail);
+    });
+  } else {
+    tryFallback(text, onSuccess, onFail);
+  }
+}
+
+function tryFallback(text, onSuccess, onFail) {
+  try {
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    ta.style.position = 'fixed';
+    ta.style.top = '0';
+    ta.style.left = '0';
+    ta.style.opacity = '0';
+    document.body.appendChild(ta);
+    ta.focus();
+    ta.select();
+    const ok = document.execCommand('copy');
+    document.body.removeChild(ta);
+    if (ok) { onSuccess(); } else { onFail(); }
+  } catch (e) {
+    onFail();
+  }
+}
+
+window.addEventListener('DOMContentLoaded', function() {
+  for (let i = 1; i <= 3; i++) {
+    const preview = document.getElementById('preview-' + i);
+    if (preview) preview.textContent = prompts[i];
+  }
+});
+</script>
+
+</body>
+</html>
